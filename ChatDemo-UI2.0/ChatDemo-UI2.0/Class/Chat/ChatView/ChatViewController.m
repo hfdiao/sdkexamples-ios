@@ -935,8 +935,8 @@
 {
     if (_longPressIndexPath && _longPressIndexPath.row > 0) {
         MessageModel *model = [self.dataSource objectAtIndex:_longPressIndexPath.row];
-        NSMutableArray *messages = [NSMutableArray arrayWithObjects:model, nil];
         [_conversation removeMessage:model.message];
+        [self.dataSource removeObjectAtIndex:_longPressIndexPath.row];
         NSMutableArray *indexPaths = [NSMutableArray arrayWithObjects:_longPressIndexPath, nil];;
         if (_longPressIndexPath.row - 1 >= 0) {
             id nextMessage = nil;
@@ -945,11 +945,11 @@
                 nextMessage = [self.dataSource objectAtIndex:(_longPressIndexPath.row + 1)];
             }
             if ((!nextMessage || [nextMessage isKindOfClass:[NSString class]]) && [prevMessage isKindOfClass:[NSString class]]) {
-                [messages addObject:prevMessage];
-                [indexPaths addObject:[NSIndexPath indexPathForRow:(_longPressIndexPath.row - 1) inSection:0]];
+                NSInteger row = _longPressIndexPath.row - 1;
+                [self.dataSource removeObjectAtIndex:row];
+                [indexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
             }
         }
-        [self.dataSource removeObjectsInArray:messages];
         [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     }
     
